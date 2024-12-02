@@ -20,6 +20,25 @@ def start(message):
     bot.register_next_step_handler(message, get_name)
 
 
+@bot.message_handler(commabds=['problems'])
+def get_problem(message):
+    btns = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton('Нажмешь я нахуй тебе писюн отгрызу', callback_data='problem')
+    btns.row(btn1)
+    bot.reply_to(message, "Иди нахуй дон", reply_markup=btns)
+
+
+@bot.callback_query_handler(func=lambda callback: True)
+def callback_problems(callback):
+    if callback.data == 'problem':
+        bot.send_message(callback.from_user.id, "Пизда тебе, лысый")
+        bot.delete_message(callback.message.chat.id, callback.message.message_id)
+        bot.send_message(callback.from_user.id,
+                         f"Пробил тебя по базе короче.\nИнформация следующая: \nИмя: {callback.from_user.name}\n"
+                         f"Фамилия: {callback.from_user.surname}\n"
+                         f"Номер телефона: {callback.from_user.phone}")
+
+
 def get_name(message):
     global name
     name = message.text
