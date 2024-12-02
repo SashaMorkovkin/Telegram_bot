@@ -8,13 +8,16 @@ surname = ''
 age = 0
 
 
-@bot.message_handler(content_types=['text'])
+@bot.message_handler(commands=['help'])
+def help_handler(message):
+    if message.text == '/help':
+        bot.send_message(message.from_user.id, f'Себе помоги, {message.from_user.username}')
+
+
+@bot.message_handler(commands=['reg'])
 def start(message):
-    if message.text == '/reg':
-        bot.send_message(message.from_user.id, "Как тебя зовут?")
-        bot.register_next_step_handler(message, get_name)
-    else:
-        bot.send_message(message.from_user.id, 'Напиши /reg')
+    bot.send_message(message.from_user.id, "Как тебя зовут?")
+    bot.register_next_step_handler(message, get_name)
 
 
 def get_name(message):
