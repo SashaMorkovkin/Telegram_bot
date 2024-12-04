@@ -8,13 +8,35 @@ surname = ''
 age = 0
 
 
-@bot.message_handler(content_types=['text'])
+@bot.message_handler(commands=['help'])
+def help_handler(message):
+    if message.text == '/help':
+        bot.send_message(message.from_user.id, f'Себе помоги, {message.from_user.username}')
+
+
+@bot.message_handler(commands=['reg'])
 def start(message):
-    if message.text == '/reg':
-        bot.send_message(message.from_user.id, "Как тебя зовут?")
-        bot.register_next_step_handler(message, get_name)
-    else:
-        bot.send_message(message.from_user.id, 'Напиши /reg')
+    bot.send_message(message.from_user.id, "Как тебя зовут?")
+    bot.register_next_step_handler(message, get_name)
+
+
+@bot.message_handler(commabds=['problems'])
+def get_problem(message):
+    btns = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton('Нажмешь я нахуй тебе писюн отгрызу', callback_data='problem')
+    btns.row(btn1)
+    bot.reply_to(message, "Иди нахуй дон", reply_markup=btns)
+
+
+@bot.callback_query_handler(func=lambda callback: True)
+def callback_problems(callback):
+    if callback.data == 'problem':
+        bot.send_message(callback.from_user.id, "Пизда тебе, лысый")
+        bot.delete_message(callback.message.chat.id, callback.message.message_id)
+        bot.send_message(callback.from_user.id,
+                         f"Пробил тебя по базе короче.\nИнформация следующая: \nИмя: {callback.from_user.name}\n"
+                         f"Фамилия: {callback.from_user.surname}\n"
+                         f"Номер телефона: {callback.from_user.phone}")
 
 
 def get_name(message):
@@ -59,4 +81,3 @@ def callback_worker(call):
 
 
 bot.polling(none_stop=True, interval=0)
-# 1488Z
